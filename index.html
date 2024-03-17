@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Undergrad Class Schedule</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      #graph-container {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        grid-template-rows: repeat(12, 1fr);
+        width: 800px;
+        height: 700px;
+        border: 0.5px solid #999;
+        overflow-y: auto;
+        max-height: 1000px;
+      }
+      .box {
+        border: 0.5px solid #999;
+        display: flex;
+      }
+      .event {
+        position: absolute;
+        border-radius: 5%;
+        transform: translate(-50%, -50%);
+      }
+      .timeandgraph {
+        display: flex;
+      }
+      .times {
+        display: grid;
+        grid-gap: 38px;
+        margin-right: 10px;
+      }
+      .days {
+        display: flex;
+        margin-left: 90px;
+        padding-bottom: 5px;
+        grid-gap: 85px;
+      }
+      .info {
+        word-wrap: break-word;
+        font-size: 10px;
+        padding: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="days">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thur</div>
+        <div>Fri</div>
+        <div>Sat</div>
+      </div>
+      <div class="timeandgraph">
+        <div class="times">
+          <div>6 AM</div>
+          <div>7 AM</div>
+          <div>8 AM</div>
+          <div>9 AM</div>
+          <div>10 AM</div>
+          <div>11 AM</div>
+          <div>12 PM</div>
+          <div>1 PM</div>
+          <div>2 PM</div>
+          <div>3 PM</div>
+          <div>4 PM</div>
+          <div>5 PM</div>
+          <div>6 PM</div>
+        </div>
+        <div id="graph-container"></div>
+      </div>
+    </div>
+    <script>
+      const rows = 7;
+      const columns = 12;
+      const graphContainer = document.getElementById("graph-container");
+
+      for (let i = 1; i <= rows * columns; i++) {
+        const box = document.createElement("div");
+        box.classList.add("box");
+        graphContainer.appendChild(box);
+      }
+
+      function plotEvent(w, h, x, y, color, eventInfo) {
+        const event = document.createElement("div");
+        event.className = "event";
+        event.style.width = w + "px";
+        event.style.height = h + "px";
+        event.style.left = x + "px";
+        event.style.top = y + "px";
+        event.style.backgroundColor = color;
+    
+        const info = document.createElement("div");
+        info.className = "info";
+        info.innerHTML= eventInfo[0] + "<br/>" + eventInfo[1] +"<br/>" + eventInfo[3] +"<br/>" + eventInfo[4];
+        event.appendChild(info);
+      
+        graphContainer.appendChild(event);
+      }
+
+      // plotEvent(width, height, left(x-axis), top(y-axis), color, info)
+       // Left: Min: 57px (from Sunday); Max: 743 (Saturday)
+       // HeightTop: 55 x 29 is 1hrs sunday 6-7am;
+       // Width: Max: 112px; Min: dynamic value
+      plotEvent(113, 82, 171, 160, "#ffd45c", ["CS 135 - Computer Science ", "24254(1001-LEC) - Erin Keith", "Mon", "8 - 9:15AM", "SEM 101"]);
+      plotEvent(113, 82, 400, 160, "#ffd45c", ["CS 135 - Computer Science ", "24254(1001-LEC) - Erin Keith", "Mon", "8 - 9:15AM", "SEM 101"]);
+
+      plotEvent(55, 144, 601, 480, "#48d4dc", ["CS 333 - Testing and DevOps", "24414(1001-LEC) - Diana Moss", "Fr", "1:00 - 3:45PM", "DMSC 105"]);
+      plotEvent(55, 144, 657, 540, "#58b44c", ["CS 381 - Game Engine Architecture", "24312(1001-LEC) - Joshua Dahl", "Fr", "2:00 - 4:45PM", "WPEB 100"]);
+     
+
+    </script>
+  </body>
+</html>
