@@ -10,8 +10,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
         margin: 0;
+      }
+      .container {
+        margin-top: 150px;
+        margin-bottom: 50px;
       }
       #graph-container {
         position: relative;
@@ -53,32 +56,10 @@
         padding: 2px;
       }
 
-      .innerBox {
-        width: 200px; /* Adjust width as needed */
-  height: 200px; /* Adjust height as needed */
-  border: 1px solid black; /* Optional: Add border for visibility */
-  position: relative; 
-      }
-      
-      .innerBox:last-child {
-        border: none; /* Remove border from the last innerBox */
-      }
-      
-      .innerBox:nth-child(2) {
-        top: 25%; /* Position the second innerBox */
-      }
-      
-      .innerBox:nth-child(3) {
-        top: 50%; /* Position the third innerBox */
-      }
-      
-      .innerBox:nth-child(4) {
-        top: 75%; /* Position the fourth row */
-      }
     </style>
   </head>
   <body>
-    <div>
+    <div class="container">
       <div class="days">
         <div>Sun</div>
         <div>Mon</div>

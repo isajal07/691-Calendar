@@ -8,7 +8,7 @@ for (let i = 1; i <= rows * columns; i++) {
   graphContainer.appendChild(box);
 }
 
-function plotEvent(w, h, x, y, color, eventInfo) {
+function plotEvent(w, h, x, y, color, className) {
   const event = document.createElement("div");
   event.className = "event";
   event.style.width = w + "px";
@@ -16,23 +16,16 @@ function plotEvent(w, h, x, y, color, eventInfo) {
   event.style.left = x + "px";
   event.style.top = y + "px";
   event.style.backgroundColor = color;
+  event.style.border = "0.01px black solid";
 
-  // const info = document.createElement("div");
-  // info.className = "info";
-  // info.innerHTML =
-  //  eventInfo[0] +
-  //  "<br/>" +
-  //  eventInfo[1] +
-  //  "<br/>" +
-  //  eventInfo[3] +
-  //  "<br/>" +
-  //  eventInfo[4];
-  // event.appendChild(info);
+  const info = document.createElement("div");
+  info.className = "info";
+  info.innerHTML = className.split(' ').slice(0, 2).join(' ');;
+  event.appendChild(info);
 
   graphContainer.appendChild(event);
 }
 
-// plotEvent(width, height, left(x-axis), top(y-axis), color, info)
 
 const ClassSearch = [
   [
@@ -526,165 +519,88 @@ const ClassSearch = [
   ],
 ];
 
-const colors = [
-  "#80e4bc",
-  "#58b44c",
-  "#ffbc7c",
-  "#48d4dc",
-  "#ffd45c",
-  "#80e4bc",
-  "#58b44c",
-  "#ffbc7c",
-  "#48d4dc",
-  "#ffd45c",
-];
+const colors = ["#b8ace4", "#209cbc", "#b8f4fc", "#68ccd4", "#60841c", "#b0cc84", "#ffd46c", "#f8ac14", "#f88c34", "#ff6c0c", "#ff5434", "#ffc4c4"];
 
-const dummydata = [
-  [
-    "CS 219 - Computer Organization",
-    [
-      {
-        Class: "24299",
-        Section: "1001-LEC",
-        "Days & Times": "MoWe 9:00AM - 10:15AM",
-        Room: "SLH 2",
-        Instructor: "Bashira Akter Anima",
-      },
-    ],
-  ],
-  [
-    "CS 252 - Digital Forensics Fundamentals",
-    [
-      {
-        Class: "24296",
-        Section: "1001-LEC",
-        "Days & Times": "TuTh 10:00AM - 11:15AM",
-        Room: "LME 321",
-        Instructor: "Nancy Latourrette",
-      },
-      {
-        Class: "24296",
-        Section: "1001-LEC",
-        "Days & Times": "Tu 10:30AM - 11:45AM",
-        Room: "LME 321",
-        Instructor: "Nancy Latourrette",
-      },
-      {
-        Class: "24296",
-        Section: "1001-LEC",
-        "Days & Times": "Tu 11:00AM - 2:45PM",
-        Room: "LME 321",
-        Instructor: "Nancy Latourrette",
-      },
-    ],
-  ],
-];
 
 function FormatClass() {
-  const restructureClassSearch = restructureClass(dummydata);
+  const restructureClassSearch = restructureClass(ClassSearch);
   const splitedObjects = splitObject(restructureClassSearch).flat();
-  const addPixelData = calculatePixelData(splitedObjects);
-
+  const filterData = useFilter(splitedObjects);
+  const addPixelData = calculatePixelData(filterData);
   const overlaps = overlappingCondition(addPixelData);
-  console.log(overlaps);
   renderClasses(overlaps);
 }
 
 FormatClass();
 
+function useFilter(splitedObjects) {
+  const removeTBAs = splitedObjects.filter(obj => obj.Start !== undefined);
+
+  // Add filters code here!!!
+
+
+  return removeTBAs;
+}
+
 function calculatePixelData(splitedObjects) {
   return splitedObjects.map((obj) => {
     const height = obj.Start && calculateHeight(obj.Start, obj.End);
     const top = getTop(height, obj.Start);
-    const left = getLeft(obj.Day); // TODO: adjust left with respect to the overlap
-    const width = 113; // TODO: adjust width with respect to the overlap
+    const left = getLeft(obj.Day); 
+    const width = 113;
+    const border = "0.3px black solid";
     return {
       ...obj,
       height,
       top,
       left,
       width,
+      border,
     };
   });
 }
 
 function renderClasses(addPixelData) {
   addPixelData.forEach((data, i) => {
-    // plotEvent(width, height, left(x-axis), top(y-axis), color, info)
-    plotEvent(data.width, data.height, data.left, data.top, data.Color, [
-      "CS 135 - Computer Science ",
-      "24254(1001-LEC) - Erin Keith",
-      "Mon",
-      "8 - 9:15AM",
-      "SEM 101",
-    ]);
+    // plotEvent(width, height, left(x-axis), top(y-axis), color, className)
+    plotEvent(data.width, data.height, data.left, data.top, data.Color, data.ClassName);
   });
 }
 
 function overlappingCondition(data) {
   const overlapCheck = eventsOverlap(data);
-
   const compressData = overlapCheck.map((oc) => {
     if (oc.length > 1) {
       const compressedData = compressEvent(oc);
       return compressedData;
     } else return oc;
   });
-
-  console.log("overlapCheck", overlapCheck);
-  console.log("compreed ", compressData.flat());
-
   return compressData.flat();
 }
 
 function compressEvent(classData) {
-  //OVERLAPING CODE
-  // plotEvent(width, height, left(x-axis), top(y-axis), color, info)
-  const sizeOfADay = 113; // Parameter
-  const leftOfFullClass = classData[0].left; // Calculate
-  const numberOfOverlap = classData.length; // Calulate
+  const sizeOfADay = 113; // Parameter Constant
+  const leftOfFullClass = classData[0].left; 
+  const numberOfOverlap = classData.length;
   const centerOfBox = sizeOfADay / numberOfOverlap / 2;
   const firstPoint = leftOfFullClass - sizeOfADay / 2;
   let odd = 0;
 
   for (let i = 0; i < numberOfOverlap; i++) {
     odd += 1;
-    classData[i].width = 113 / numberOfOverlap;
+    classData[i].width = sizeOfADay / numberOfOverlap;
     classData[i].left = firstPoint + centerOfBox * (odd + i);
-
-    //   arr.push({
-    //     ...classData[i],
-    //     width: 113 / numberOfOverlap,
-    //     left: firstPoint + centerOfBox * odd + i,
-    //   })
-    // console.log("left: ", firstPoint + centerOfBox * odd, arr);
-
-    // plotEvent(width, height, left(x-axis), top(y-axis), color, info)
-    //   plotEvent(
-    //     113 / numberOfOverlap,
-    //     150,
-    //     firstPoint + centerOfBox * odd,
-    //     70.875,
-    //     colors[i / 2],
-    //     [
-    //       "CS 135 - Computer Science ",
-    //       "24254(1001-LEC) - Erin Keith",
-    //       "Mon",
-    //       "8 - 9:15AM",
-    //       "SEM 101",
-    //     ]
-    //   );
   }
-  console.log("classData", classData);
   return classData;
 }
 
-// TODO: Error!! 
 function getTop(height, startTime) {
-  const duration = calculateDuration("9:00AM", startTime);
-  const startAt = (duration * 116) / 60;
-  const result = (height * 28.5) / 56 + startAt;
-  return result;
+  const durationFromStart = calculateDuration("8:00AM", startTime);
+  const halfHeight = height/2;
+  const tTop = durationFromStart * 57.68 / 60; // Formula to find the tTop
+  const contant = 1.01;
+  const top = (tTop + halfHeight) * contant; // Formula to calculate the y-axis
+  return top;
 }
 
 function getLeft(day) {
@@ -706,19 +622,21 @@ function getLeft(day) {
 }
 function calculateHeight(start, end) {
   const classDuration = calculateDuration(start, end);
-  const height = classDuration * (56 / 60);
+  const constant = 1.03;
+  const height = classDuration * (56 / 60) * constant; // Formula to calculate the height
   return height;
 }
 
 function calculateDuration(start, end) {
   const startTime = parseTime(start);
   const endTime = parseTime(end);
-  const durationMs = endTime.getTime() - startTime.getTime();
+  const durationMs = endTime?.getTime() - startTime?.getTime();
   const durationMinutes = durationMs / (1000 * 60);
   return durationMinutes;
 }
 
 function parseTime(timeString) {
+  if(!timeString) return null;
   const [hourMinute, ampm] = timeString.split(/(?=[AP]M)/);
   const [hour, minute] = hourMinute.split(":");
   let hours = parseInt(hour);
@@ -811,6 +729,7 @@ function eventsOverlap(data) {
 }
 
 function convertToISO8601(timeString) {
+  if(!timeString) return null;
   // Split the time string into hours, minutes, and AM/PM
   const splitedTime =
     timeString.length > 1
@@ -837,7 +756,3 @@ function convertToISO8601(timeString) {
   return date.toISOString();
 }
 
-// Example usage:
-// const timeString = '10:00 AM';
-// const iso8601 = convertToISO8601(timeString);
-// console.log(iso8601); // Output should be: 2024-03-27T22:00:00.000Z
